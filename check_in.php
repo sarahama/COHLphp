@@ -14,7 +14,7 @@ class CheckIn
         $this->conn = $db->connect();
     }
  
-
+// Hello
 
     //Function to check for an existing user
     public function checkinExists($user_id, $event_id) {
