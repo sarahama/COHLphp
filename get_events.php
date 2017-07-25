@@ -19,7 +19,7 @@ class GetEvents
     public function getAllUpcomingEvents() {
         $events = array();
         $tempArray = array();
-        $stmt = $this->conn->prepare("SELECT * FROM Event WHERE Event_Start_Date >= CURRENT_TIMESTAMP ORDER BY Event_Start_Date ASC");
+        $stmt = $this->conn->prepare("SELECT * FROM Event WHERE Event_END_Date >= CURRENT_TIMESTAMP ORDER BY Event_Start_Date ASC");
         if ($stmt->execute()) {
 
             $results = $stmt->get_result();
@@ -90,6 +90,8 @@ class GetEvents
 
     //Function to get events the user has attended
     public function getAllAttendedEvents($user_id) {
+        $events = array();
+        $tempArray = array();
         $stmt = $this->conn->prepare("SELECT * FROM Event 
                                     INNER JOIN Event_Attendance 
                                     ON Event_Attendance.Event_ID = Event.Event_ID
