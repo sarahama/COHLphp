@@ -61,7 +61,6 @@ class CheckIn
             if ($points !== false) {
                 // give the user their points
                 if ($this->updateUserPoints($user_id, $points)) {
-
                     //create an attendance record
                     $stmt = $this->conn->prepare("INSERT INTO Event_Attendance(User_ID, Event_ID) values(?, ?)");
                     $stmt->bind_param("ii", $user_id, $event_id);

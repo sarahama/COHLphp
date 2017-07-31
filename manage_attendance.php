@@ -21,8 +21,8 @@ $response = array(
         $event_id = (int)$_POST["event_id"];
 
         $code = $_POST["code"];
-     
- 
+
+      
         //inserting values 
         if($db->checkIntoEvent($user_id, $event_id, $code)){
             $response["error"]="false";
