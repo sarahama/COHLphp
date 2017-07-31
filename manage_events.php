@@ -12,8 +12,8 @@
  
  	// $events = $db->getAllUpcomingEvents();
  	// echo json_encode($events);
-
  
+    
     if($_SERVER['REQUEST_METHOD']==='POST'){
      
      	$events = false;
@@ -29,7 +29,7 @@
         	$events = $db->getInterestedEvents($user_id);
         
         } elseif ($select_type === "attended") {
-        	
+        	$user_id = $_POST["user_id"];
         	$events = $db->getAllAttendedEvents($user_id);
         } elseif ($select_type === "current") {
         	

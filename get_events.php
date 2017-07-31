@@ -25,6 +25,9 @@ class GetEvents
             $results = $stmt->get_result();
             while($row = $results->fetch_object()){
                 $tempArray = $row;
+                $event_id = $tempArray->Event_ID;
+                $interested_count = $this->getAllInterested($event_id);
+                $tempArray->Count = $interested_count;
                 array_push($events, $tempArray);
             }
             $stmt->close();
@@ -49,6 +52,9 @@ class GetEvents
             $results = $stmt->get_result();
             while($row = $results->fetch_object()){
                 $tempArray = $row;
+                $event_id = $tempArray->Event_ID;
+                $interested_count = $this->getAllInterested($event_id);
+                $tempArray->Count = $interested_count;
                 array_push($events, $tempArray);
             }
             $stmt->close();
@@ -78,6 +84,9 @@ class GetEvents
             $results = $stmt->get_result();
             while($row = $results->fetch_object()){
                 $tempArray = $row;
+                $event_id = $tempArray->Event_ID;
+                $interested_count = $this->getAllInterested($event_id);
+                $tempArray->Count = $interested_count;
                 array_push($events, $tempArray);
             }
             $stmt->close();
@@ -103,6 +112,9 @@ class GetEvents
             $results = $stmt->get_result();
             while($row = $results->fetch_object()){
                 $tempArray = $row;
+                $event_id = $tempArray->Event_ID;
+                $interested_count = $this->getAllInterested($event_id);
+                $tempArray->Count = $interested_count;
                 array_push($events, $tempArray);
             }
             $stmt->close();
@@ -111,6 +123,28 @@ class GetEvents
         } else {
             return false;
         }
+    }
+
+    // Return the number of people interested in a particular event
+    public function getAllInterested($event_id){
+        $events = array();
+        $tempArray = array();
+        $stmt = $this->conn->prepare("SELECT * FROM Event_Interest
+                                    WHERE Event_ID = ?");
+        $stmt->bind_param("i", $event_id);
+        if ($stmt->execute()) {
+            $count = 0;
+            $results = $stmt->get_result();
+            while($results->fetch_object()){
+                $count = $count + 1;
+            }
+            $stmt->close();
+        
+            return $count;
+        } else {
+            return false;
+        }
+
     }
  
 }

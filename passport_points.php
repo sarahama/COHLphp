@@ -10,6 +10,7 @@ $response = array(
 
     //including the db operation file
     require_once "get_points.php";
+    require_one "get_events.php";
     $db = new UserPoints();
  
 
@@ -31,6 +32,7 @@ $response = array(
             $response["message"]='Could not retrieve points';
             $response["points"] = "";
         }
+
      
     }else{
         $response["error"]="true";
