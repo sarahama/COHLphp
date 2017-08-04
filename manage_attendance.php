@@ -12,7 +12,6 @@ $response = array(
     $db = new CheckIn();
  
 
-    //$_SERVER['REQUEST_METHOD']==='POST'
     if($_SERVER['REQUEST_METHOD']==='POST'){
      
         //getting values
@@ -23,14 +22,15 @@ $response = array(
         $code = $_POST["code"];
 
       
-        //inserting values 
-        if($db->checkIntoEvent($user_id, $event_id, $code)){
-            $response["error"]="false";
-            $response["message"]='Checked in successfully';
-        }else{
-     
-            $response["error"]="true";
-            $response["message"]='Could not checkin or add points';
+        //make sure the string is not null
+        if (trim($code) !== ""){
+            if($db->checkIntoEvent($user_id, $event_id, $code)){
+                $response["error"]="false";
+                $response["message"]='Checked in successfully';
+            }else{
+                $response["error"]="true";
+                $response["message"]='Could not checkin or add points';
+            }
         }
      
     }else{

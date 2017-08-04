@@ -10,7 +10,7 @@ $response = array(
 
     //including the db operation file
     require_once "get_points.php";
-    require_one "get_events.php";
+    require_once "get_events.php";
     $db = new UserPoints();
  
 
