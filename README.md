@@ -18,3 +18,8 @@ For an example, manage_events.php uses the get_events.php file.
 Examine these files to understand how config_db.php, connect.php, get_events.php, 
 and manage_events.php all work together. This is the general pattern.
 
+# Set up instructions
+Copy the config_db_template.php file into a new file called config_db.php.
+Fill in your db credentials.
+That's it!
+
