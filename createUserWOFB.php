@@ -35,12 +35,12 @@ class CreateUserWOFB
     }
 
 
-    public function createUser($email, $pass, $first_name)
+    public function createUser($email, $pass, $first_name, $phone)
     {
         if (!$this->userExists($email)) {
             $password = md5($pass);
-            $stmt = $this->conn->prepare("INSERT INTO User (password, email, first_name) VALUES (?, ?, ?)");
-            $stmt->bind_param("sss", $password, $email, $first_name);
+            $stmt = $this->conn->prepare("INSERT INTO User (password, email, first_name, phone) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssss", $password, $email, $first_name, $phone);
             
             if ($stmt->execute()) {
                 $stmt->close();
@@ -64,6 +64,43 @@ class CreateUserWOFB
         $stmt->execute();
         $stmt->store_result();
         return $stmt->num_rows > 0;
+    }
+
+    // update the user's info
+    public function updateUser($email, $name, $user_id){
+        $stmt = $this->conn->prepare("UPDATE User 
+                                    SET First_Name = ?, Email = ?
+                                    WHERE User_ID = ?");
+        $stmt->bind_param("ssi", $name, $email, $user_id);
+        if ($stmt->execute()) {
+            $stmt->close();
+            return true;
+
+        } else {
+            $stmt->close();
+            return false;
+        }
+
+    }
+
+    public function getUserInfo($user_id) {
+        $user = array();
+        $tempArray = array();
+        $stmt = $this->conn->prepare("SELECT * FROM User WHERE User_ID = ?");
+        $stmt->bind_param("i", $user_id);
+        if ($stmt->execute()) {
+
+            $results = $stmt->get_result();
+            while($row = $results->fetch_object()){
+                $tempArray = $row;
+                array_push($user, $tempArray);
+            }
+            $stmt->close();
+        
+            return $user;
+        } else {
+            return false;
+        }
     }
 
 

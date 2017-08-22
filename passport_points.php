@@ -15,16 +15,17 @@ $response = array(
  
 
     //$_SERVER['REQUEST_METHOD']==='POST'
-    if($_SERVER['REQUEST_METHOD']==='POST'){
+    if(true){
      
         //getting values
-        $user_id = (int)$_POST["user_id"];
-        
+        //$user_id = (int)$_POST["user_id"];
+        $user_id = 11;
+
         //inserting values 
         $points = $db->getUserPoints($user_id);
         if($points !== false){
             $response["error"]="false";
-            $response["message"]='Retrieved points';
+            $response["message"]= "Retrieved points";
             $response["points"] = $points;
         }else{
      

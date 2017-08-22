@@ -11,9 +11,9 @@
     $db = new CreateUserWOFB();
 
 
-  
     if($_SERVER['REQUEST_METHOD']==='POST'){
-        
+
+
      	$user = false;
         //getting the request
         $select_type = $_POST["select_type"];
@@ -47,6 +47,7 @@
             $pass = trim($_POST["password"]);
             $conf_pass = trim($_POST["confirm_password"]);
             $name = trim($_POST["name"]);
+            $phone = trim($_POST["phone"]);
 
             // make sure the user provided valid input
             if ($pass !== $conf_pass){
@@ -67,7 +68,7 @@
                 $response["user"] = "";
             } else {
                 // if the input is valid try to create the new user
-                $user = $db->createUser($email, $pass, $name);
+                $user = $db->createUser($email, $pass, $name, $phone);
                 
                 if($user === false){
                     // if the sign up fails, most likely the email is already registered
@@ -77,12 +78,57 @@
                 }
             }
 
+        } elseif ($select_type === "update_settings") {
+            // if the request is to sign up a new user
+
+            // get the post parameters
+            $email = trim($_POST["email"]);
+            $name = trim($_POST["name"]);
+            $user_id = $_POST["user_id"];
+
+            // make sure the user provided valid input
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $response["error"]="true";
+                $response["message"]="Invalid email";
+                $response["user"] = "";
+            } elseif ($name === "" || $email === "") {
+                $response["error"]="true";
+                $response["message"]="Fill out all fields";
+                $response["user"] = "";
+            } else {
+                // if the input is valid try to update the user
+                $user = $db->updateUser($email, $name, $user_id);
+                
+                if($user === false){
+                    // if the sign up fails, most likely the email is already registered
+                    $response["error"]="true";
+                    $response["message"]="User was not updated correctly";
+                    $response["user"] = $user;
+                }
+            }
+
+        } elseif ($select_type === "get_user_info") {
+            // if the request is to sign up a new user
+
+            // get the post parameters
+            $user_id = $_POST["user_id"];
+
+            $user = $db->getUserInfo($user_id);
+                
+            if($user === false){
+                // if the sign up fails, most likely the email is already registered
+                $response["error"]="true";
+                $response["message"]="User info couldn't be retrieved";
+                $response["user"] = $user;
+            }
+
         }
+
 
         // if the sign up or sign in was successful, return the info
         if($user !== false){
             $response["error"]="false";
-            $response["message"]='User retrieved';
+            $response["message"]='User updated';
             $response["user"] = $user;
         }
      
