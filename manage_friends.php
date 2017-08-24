@@ -19,7 +19,7 @@
         $select_type = $_POST["select_type"];
         $user_id = $_POST["user_id"];
 
-        // $select_type = "view_unconnected_friends";
+        // $select_type = "view_friends";
         // $user_id = 11;
 
         if ($select_type === "view_friends") {

@@ -20,34 +20,31 @@ class GetFriends
         $friends = array();
         $tempArray = array();
 
-        // need to do 2 queries because they could be friend 1 or friend 2
-        $stmt = $this->conn->prepare("SELECT User.First_Name, User.User_ID, User.Total_Points, Friends.Accepted FROM Friends 
+        // get pending requests, if they are receiving the request they are friend 2
+        $stmt1= $this->conn->prepare("SELECT User.First_Name, User.User_ID, User.Total_Points, Friends.Accepted, Friends.Responded FROM Friends 
                                         INNER JOIN User 
-                                        ON Friends.Friend2 = User.User_ID
-                                        WHERE Friends.Friend1 = ?
-                                        AND Friends.Accepted = 1");
-        $stmt->bind_param("i", $user_id);
-        if ($stmt->execute()) {
+                                        ON Friends.Friend1 = User.User_ID
+                                        WHERE Friends.Friend2 = ?
+                                        AND Friends.Responded = 0");
+        $stmt1->bind_param("i", $user_id);
+        if ($stmt1->execute()) {
 
-            $results = $stmt->get_result();
+            $results = $stmt1->get_result();
             while($row = $results->fetch_object()){
                 $tempArray = $row;
                 array_push($friends, $tempArray);
             }
-            $stmt->close();
+            $stmt1->close();
         
         } else {
             return false;
         }
 
-
-        // second query
-
-        // need to do 2 queries because they could be friend 1 or friend 2
-        $stmt2 = $this->conn->prepare("SELECT User.First_Name, User.User_ID, User.Total_Points, Friends.Accepted FROM Friends 
+        // for friends that responded they could be friend 1 or friend 2, need to do these separately because the joins with the user table are different
+        $stmt2 = $this->conn->prepare("SELECT User.First_Name, User.User_ID, User.Total_Points, Friends.Accepted, Friends.Responded FROM Friends 
                                         INNER JOIN User 
-                                        ON Friends.Friend1 = User.User_ID
-                                        WHERE Friends.Friend2 = ?
+                                        ON Friends.Friend2 = User.User_ID
+                                        WHERE Friends.Friend1 = ?
                                         AND Friends.Accepted = 1");
         $stmt2->bind_param("i", $user_id);
         if ($stmt2->execute()) {
@@ -63,12 +60,13 @@ class GetFriends
             return false;
         }
 
-        // get pending requests, if they are receiving the request they are friend 2
-        $stmt3 = $this->conn->prepare("SELECT User.First_Name, User.User_ID, User.Total_Points, Friends.Accepted FROM Friends 
+
+        // for friends that responded they could be friend 1 or friend 2
+        $stmt3 = $this->conn->prepare("SELECT User.First_Name, User.User_ID, User.Total_Points, Friends.Accepted, Friends.Responded FROM Friends 
                                         INNER JOIN User 
                                         ON Friends.Friend1 = User.User_ID
                                         WHERE Friends.Friend2 = ?
-                                        AND Friends.Responded = 0");
+                                        AND Friends.Accepted = 1");
         $stmt3->bind_param("i", $user_id);
         if ($stmt3->execute()) {
 
@@ -125,7 +123,7 @@ class GetFriends
 
 
         // now get the id's of their current friends, we will not include these users
-        $current_friends = $this->getConnectedFriends($user_id);
+        $current_friends = $this->getAllFriends($user_id);
         $id_string = "AND User.User_ID NOT IN (";
         $num_friends = count($current_friends);
         $i = 0;
@@ -162,7 +160,7 @@ class GetFriends
     {
         // friend 1 is the one who sent the request, 2 is responding
         $stmt = $this->conn->prepare('UPDATE Friends 
-                                    SET Accept = ?, Responded = 1
+                                    SET Accepted = ?, Responded = 1
                                     WHERE Friend1 = ?
                                     AND Friend2 = ? 
                                     ');
@@ -192,6 +190,34 @@ class GetFriends
         }
     }
 
- 
+    //Function to get the user's current friends and friends with pending requests
+    public function getAllFriends($user_id) {
+        $friends = array();
+        $tempArray = array();
+
+        // need to do 2 queries because they could be friend 1 or friend 2
+        $stmt = $this->conn->prepare("SELECT User.First_Name, User.User_ID, User.Total_Points, Friends.Accepted, Friends.Responded FROM Friends 
+                                        INNER JOIN User 
+                                        ON Friends.Friend2 = User.User_ID
+                                        WHERE Friends.Friend1 = ? OR Friends.Friend2 = ?");
+        $stmt->bind_param("ii", $user_id, $user_id);
+        if ($stmt->execute()) {
+
+            $results = $stmt->get_result();
+            while($row = $results->fetch_object()){
+                $tempArray = $row;
+                array_push($friends, $tempArray);
+            }
+            $stmt->close();
+        
+        } else {
+            return false;
+        }
+
+
+        return $friends;
+    }
+
+
 }
 ?>
