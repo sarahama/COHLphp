@@ -26,3 +26,19 @@ CREATE TABLE `Store` (
  `Store_End` date NOT NULL,
  PRIMARY KEY (`Store_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1
+
+CREATE TABLE `Friends` (
+ `Friend1` int(10) NOT NULL,
+ `Friend2` int(10) NOT NULL,
+ `Responded` bit(1) DEFAULT NULL,
+ `Accepted` bit(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
+
+CREATE TABLE `Feedback` (
+ `Feedback_ID` int(11) NOT NULL AUTO_INCREMENT,
+ `User_ID` int(11) NOT NULL,
+ `Subject` varchar(150) NOT NULL,
+ `Message` varchar(500) NOT NULL,
+ `Submitted_On` datetime NOT NULL,
+ PRIMARY KEY (`Feedback_ID`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1
